@@ -125,10 +125,13 @@ import re
 def twitter1(n):
     for i in n:
         split_n = i.split("/")
-
-        exp_tree = "".join(split_n[0].split())
-        operation = "".join(split_n[1].split()).upper()
-
+        # print("split_n",split_n)
+        if(len(split_n) == 2):
+            exp_tree = "".join(split_n[0].split())
+            operation = "".join(split_n[1].split()).upper()
+        else:
+            exp_tree = "".join(split_n[0].split())
+            operation = ""
 
         if (operation == " " or operation == None or operation == ""):
             print(exp_tree)
@@ -155,74 +158,42 @@ def r_reverse(word):
             reverse_tree.append(i)
     new_word = "".join(reverse_tree)
     return(new_word)
+    # return word[::-1]
 
 def s_simplify(word):
-    """normal_exp_tree = "".join(word.split())
-    # print("normal_exp_tree: "+normal_exp_tree)
+    # print(word)
+    normal_exp_tree = "".join(word.split())
     exp_split = normal_exp_tree.split("(")
-    print("exp_split: ")
-    print(exp_split)
+
+
     exp_split = filter(None, exp_split)
     # print(exp_split)
-    # print("****")
     simplified = []
     for i in exp_split:
         if (i.count(")") >= 2):
             simplified.append("("*(i.count(")")-1)+"".join(i.split(")"))+")"*(i.count(")")-1))
-        elif (i.count(")") < 2 and i.count(")") > 0):
-            # simplified.append("".join(i.split(")")))
+        elif (i.count(")") < 2 and i.count(")") > 0 and i.count("(") == 0):
             simplified.append("(" + "".join(i.split(")")) + ")")
         elif (i.count(")") == 0):
             simplified.append("".join(i.split(")")))
-    simplified = filter(None, simplified)
-    # print("".join(simplified))
-    return("".join(simplified))"""
 
 
-    normal_exp_tree = "".join(word.split())
-    exp_split = filter(None, re.split('(\W)', normal_exp_tree))
-    print(exp_split)
+    simplified = "".join(filter(None, simplified))
+    # print(simplified)
+    for i in simplified:
+        if i == "(" and simplified.index(i) == 0:
 
-    for i in exp_split:
-        if (i == "(" and exp_split.index(i) == 0):
-            print("(")
-        else:
+            simplified = simplified[1:]#.replace("(", "")
+            simplified = simplified.replace(")", "", 1)
+    # print(simplified)
+    return simplified
 
-    simplified = []
 
-    print("Simplified : ")
-    print(simplified)
-
-# twitter1("(AB) C((D E )F) /SR")
+# twitter1(["(AB) C((D E )F) /SR"])
 # s_simplify("(AB) C((D E )F) ") #ABC(DEF)
-# twitter1(["(AB)C/", "(AB)C/S", "(AB)C/RS", "A(BC)/RS", "A(BC)/RSR"]) #[(AB)C, ABC, C(BA), CBA, ABC]
-s_simplify("C(BA)") #C(BA)
-s_simplify("(CB)A") #CBA
+twitter1(["(AB)C/", "(AB)C/S", "(AB)C/RS", "A(BC)/RS", "A(BC)/RSR"]) #[(AB)C, ABC, C(BA), CBA, ABC]
+twitter1(["(AB)C"])
+# s_simplify("C(BA)") #C(BA)
+# s_simplify("(CB)A") #CBA
 # s_simplify("(AB) C((D E )F)")
 
-
-def buildParseTree(fpexp):
-    fplist = fpexp.split()
-    pStack = Stack()
-    eTree = BinaryTree('')
-    pStack.push(eTree)
-    currentTree = eTree
-    for i in fplist:
-        if i == '(':
-            currentTree.insertLeft('')
-            pStack.push(currentTree)
-            currentTree = currentTree.getLeftChild()
-        elif i not in ['+', '-', '*', '/', ')']:
-            currentTree.setRootVal(int(i))
-            parent = pStack.pop()
-            currentTree = parent
-        elif i in ['+', '-', '*', '/']:
-            currentTree.setRootVal(i)
-            currentTree.insertRight('')
-            pStack.push(currentTree)
-            currentTree = currentTree.getRightChild()
-        elif i == ')':
-            currentTree = pStack.pop()
-        else:
-            raise ValueError
-    return eTree
